@@ -9,7 +9,7 @@ class ErrWidget extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Text(
           "Դե, դա չպետք է տեղի ունենար...",
           style:  GoogleFonts.libreBaskerville(

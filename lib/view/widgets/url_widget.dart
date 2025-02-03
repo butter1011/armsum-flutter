@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class UrlsWidget extends StatefulWidget {
-  const UrlsWidget({super.key, required this.article, required this.url, required this.onTap, required this.copyToClipboard});
+class UrlWidget extends StatefulWidget {
+  const UrlWidget({super.key, required this.article, required this.url, required this.onTap, required this.copyToClipboard});
   final String article;
   final String url;
   final VoidCallback onTap;
   final VoidCallback copyToClipboard;
 
   @override
-  State<UrlsWidget> createState() => _UrlsWidgetState();
+  State<UrlWidget> createState() => _UrlWidgetState();
 }
 
-class _UrlsWidgetState extends State<UrlsWidget> {
+class _UrlWidgetState extends State<UrlWidget> {
   bool _isCopied = false;
 
   void _handleCopy() {

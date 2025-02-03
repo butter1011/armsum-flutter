@@ -8,8 +8,7 @@ class SummaryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {    
     final textTheme = Theme.of(context).textTheme;
-    final cardColor = Theme.of(context).cardColor;
-    print("========================== $article");
+    final cardColor = Theme.of(context).cardColor; 
 
     return SafeArea(
       child: Column(
@@ -30,7 +29,7 @@ class SummaryWidget extends StatelessWidget {
                       fontSize: 20, color: Colors.blue)),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
                 color: cardColor,

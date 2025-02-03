@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
@@ -39,10 +40,14 @@ class ThemeProvider with ChangeNotifier {
     buttonTheme: const ButtonThemeData(
       buttonColor: Colors.black,
     ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: Colors.black),
-      bodyMedium: TextStyle(color: Colors.black87),
-      bodySmall: TextStyle(color: Colors.black, fontSize: 16),    
+    textTheme: TextTheme(
+      bodyLarge: GoogleFonts.libreBaskerville(
+        fontSize: 44,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      bodyMedium: const TextStyle(color: Colors.black87, fontSize: 20),
+      bodySmall: const TextStyle(color: Colors.black, fontSize: 16),
     ),
     cardColor: Colors.white,
   );
@@ -54,12 +59,16 @@ class ThemeProvider with ChangeNotifier {
     dividerColor: const Color(0xff1e2937),
     primaryColor: Colors.white,
     buttonTheme: const ButtonThemeData(
-      buttonColor: Colors.white,      
+      buttonColor: Colors.white,
     ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: Colors.white),
-      bodyMedium: TextStyle(color: Colors.white),
-      bodySmall: TextStyle(color: Colors.white54, fontSize: 16),    
+    textTheme: TextTheme(
+      bodyLarge: GoogleFonts.libreBaskerville(
+        fontSize: 44,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      bodyMedium: const TextStyle(color: Colors.white, fontSize: 20),
+      bodySmall: const TextStyle(color: Colors.white, fontSize: 16),
     ),
     cardColor: const Color(0xff1e2937),
   );
