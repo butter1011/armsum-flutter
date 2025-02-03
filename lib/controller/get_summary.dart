@@ -1,12 +1,14 @@
-
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class SummaryController {
-  static const String apiUrl = 'https://article-extractor-and-summarizer.p.rapidapi.com/summarize';
-  static const String apiKey = '430e37f3ecmshe2d7253b695e856p119bf4jsn54aa0cf62739';
+  
+  final String apiKey = dotenv.get('apiKey');
+  final String apiUrl = dotenv.get('apiUrl');
 
-  Future<String> getSummary(String articleUrl) async {
+  Future<Map<String, dynamic>> getSummary(String articleUrl) async {
+    print("This is apiKey>>>>>>>>>>>>>>>>>>>>> $apiKey");
     try {
       final response = await http.get(
         Uri.parse('$apiUrl?url=${Uri.encodeComponent(articleUrl)}&length=3'),
@@ -18,12 +20,14 @@ class SummaryController {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return data['summary'] ?? 'No summary available';
+        return {'success': true, 'data': data['summary']};
       } else {
-        throw Exception('Failed to fetch summary: ${response.statusCode}');
+        return {
+          'success': false,
+        };
       }
     } catch (e) {
-      throw Exception('Error getting summary: $e');
+      return {'success': false, 'data': e.toString()};
     }
   }
 }

@@ -1,9 +1,11 @@
 import 'package:armsum/controller/get_summary.dart';
 import 'package:armsum/core/theme_provider.dart';
+import 'package:armsum/view/widgets/err_widget.dart';
 import 'package:armsum/view/widgets/loading_widget.dart';
 import 'package:armsum/view/widgets/summary_widget.dart';
 import 'package:armsum/view/widgets/urls_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -17,86 +19,147 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   final SummaryController _summaryController = SummaryController();
   final TextEditingController urlController = TextEditingController();
+  late AnimationController _animationController;
   String url = "";
   String article = "";
   Map<String, String> summaries = {};
   bool isLoading = false;
+  bool happenedError = false;
+  bool showTooltip = false;
+  late Animation<double> _fadeAnimation;
+  String toolTipMessage = "";
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
     fetchSummaries();
+    _fadeAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
   }
 
   void fetchSummaries() async {
-    print("✨");
     final prefs = await SharedPreferences.getInstance();
     String? summariesJson = prefs.getString('summaries');
-    print("✨✨$summariesJson");
     if (summariesJson != null) {
-      print("🎎🎏🎏");
       try {
         Map<String, dynamic> decodedJson = json.decode(summariesJson);
         Map<String, String> summariesMap =
             decodedJson.map((key, value) => MapEntry(key, value.toString()));
-        print("✨✨✨ ${summariesMap.length}");
-
         setState(() {
           summaries = summariesMap;
         });
       } catch (e) {
-        print("Error decoding JSON: $e");
+        debugPrint("Error decoding JSON: $e");
       }
     }
   }
 
   Future<void> fetchSummary(String url) async {
+    FocusScope.of(context).unfocus();
+    if (url.isEmpty) {
+      setState(() {
+        print("==============object");
+        showTooltip = true;
+        toolTipMessage = "Please fill in this field.";
+        _animationController.forward();
+      });
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() {
+            showTooltip = false;
+          });
+          _animationController.reverse();
+        }
+      });
+      return;
+    }
+
+    bool isValidUrl = Uri.tryParse(url)?.hasAbsolutePath ?? false;
+    if (!isValidUrl) {
+      setState(() {
+        showTooltip = true;
+        toolTipMessage = "Please enter in valid URL.";
+        _animationController.forward();
+      });
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() {
+            showTooltip = false;
+          });
+          _animationController.reverse();
+        }
+      });
+      return;
+    }
+
     setState(() {
       isLoading = true;
+      happenedError = false;
     });
 
-    String result = await _summaryController.getSummary(url);
-    print("This is  the summary🧨: $result");
+    Map result = await _summaryController.getSummary(url);
+    if (result['success'] == true) {
+      final prefs = await SharedPreferences.getInstance();
+      String? existingSummaries = prefs.getString('summaries');
+      Map<String, String> summariesMap = {};
 
-    // Save url and article to SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    String? existingSummaries = prefs.getString('summaries');
-    Map<String, String> summariesMap = {};
-
-    if (existingSummaries != null) {
-      try {
-        Map<String, dynamic> decodedJson = json.decode(existingSummaries);
-        summariesMap =
-            decodedJson.map((key, value) => MapEntry(key, value.toString()));
-      } catch (e) {
-        print("Error decoding JSON: $e");
-        summariesMap = {};
+      if (existingSummaries != null) {
+        try {
+          Map<String, dynamic> decodedJson = json.decode(existingSummaries);
+          summariesMap =
+              decodedJson.map((key, value) => MapEntry(key, value.toString()));
+        } catch (e) {
+          debugPrint("Error decoding JSON: $e");
+          summariesMap = {};
+        }
       }
-    }
-    summariesMap[url] = result;
-    await prefs.setString('summaries', json.encode(summariesMap));
-    fetchSummaries();
+      summariesMap[url] = result['data'];
+      await prefs.setString('summaries', json.encode(summariesMap));
+      fetchSummaries();
 
-    setState(() {
-      article = result;
-      isLoading = false;
-    });
+      setState(() {
+        article = result['data'];
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+        happenedError = true;
+      });
+    }
   }
 
   Future<void> initializeSummaries() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('summaries', '{}');
+    setState(() {
+      summaries = {};
+      article = "";
+    });
+  }
+
+  @override
+  void dispose() {
+    urlController.dispose();
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final primaryColor = Theme.of(context).primaryColor;
+    final dividerColor = Theme.of(context).dividerColor;
     final textTheme = Theme.of(context).textTheme;
     final cardColor = Theme.of(context).cardColor;
+    final primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
       body: Container(
@@ -135,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                           height: 34,
                           width: 120,
                           decoration: BoxDecoration(
-                            color: primaryColor,
+                            color: dividerColor,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: const Center(
@@ -162,7 +225,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              // Main Content
               Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -210,69 +272,149 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(height: 64),
-                      // Search Bar
-                      Container(
-                        decoration: BoxDecoration(
-                            color: cardColor,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: textTheme.bodyLarge?.color ?? Colors.white,
-                            )),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.insert_link,
-                              color: Colors.black,
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                color: cardColor,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: primaryColor,
+                                      
+                                )),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextFormField(
-                                onChanged: (value) {
-                                  setState(() {
-                                    url = value;
-                                  });
-                                },
-                                controller: urlController,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  hintText: 'Տեղադրեք հոդվածի հղումը',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.insert_link,
+                                  color: textTheme.bodyLarge?.color,
                                 ),
-                                style: TextStyle(
-                                    color: textTheme.bodyLarge?.color ??
-                                        Colors.white),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: TextFormField(
+                                    onChanged: (value) {
+                                      setState(() {
+                                        url = value;
+                                      });
+                                    },
+                                    controller: urlController,
+                                    decoration: InputDecoration(
+                                      border: const OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      hintText: 'Տեղադրեք հոդվածի հղումը',
+                                      hintStyle: TextStyle(
+                                        color: textTheme.bodyLarge?.color
+                                            ?.withOpacity(0.5),
+                                      ),
+                                    ),
+                                    style: TextStyle(
+                                        color: textTheme.bodyLarge?.color),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    fetchSummary(urlController.text);
+                                  },
+                                  child: Container(
+                                    height: 35,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: textTheme.bodyLarge?.color ??
+                                            Colors.white,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      color: textTheme.bodyLarge?.color,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          if (showTooltip)
+                            Positioned(
+                              bottom: -15,
+                              left: 0,
+                              right: 0,
+                              child: FadeTransition(
+                                opacity: _fadeAnimation,
+                                child: Center(
+                                  child: Container(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 250),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: dividerColor,
+                                      ),                                  
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 25,
+                                          height: 25,
+                                          decoration: BoxDecoration(
+                                            color: Colors.orange[700],
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              "!",
+                                              style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w900,
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          toolTipMessage,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                fetchSummary(urlController.text);
-                              },
-                              child: Container(
-                                height: 35,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: textTheme.bodyLarge?.color ??
-                                        Colors.white,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(Icons.arrow_forward),
-                              ),
-                            )
-                          ],
-                        ),
+                        ],
                       ),
                       const SizedBox(height: 16),
-                      ...summaries.keys.map((key) => Padding(
+                      ...summaries.entries.map((entry) => Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
-                            child: UrlsWidget(url: key),
+                            child: UrlsWidget(
+                                url: entry.key,
+                                article: entry.value,
+                                onTap: () {
+                                  setState(() {
+                                    article = entry.value;
+                                    happenedError = false;
+                                  });
+                                },
+                                copyToClipboard: () {
+                                  Clipboard.setData(
+                                      ClipboardData(text: entry.key));
+                                }),
                           )),
-                      if (isLoading)
+                      if (happenedError)
+                        const ErrWidget()
+                      else if (isLoading)
                         const LoadingWidget()
                       else if (article.isNotEmpty)
                         SummaryWidget(article: article)

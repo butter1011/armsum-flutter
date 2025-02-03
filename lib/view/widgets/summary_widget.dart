@@ -6,7 +6,7 @@ class SummaryWidget extends StatelessWidget {
   final String article;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     final textTheme = Theme.of(context).textTheme;
     final cardColor = Theme.of(context).cardColor;
     print("========================== $article");
@@ -45,10 +45,7 @@ class SummaryWidget extends StatelessWidget {
             child: Text(
               article,
               textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: 16,
-                color: textTheme.bodyLarge?.color,
-              ),
+              style: textTheme.bodySmall,
             ),
           ),
         ],

@@ -6,27 +6,22 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     List<Color> kDefaultRainbowColors = const [
-      Colors.red,
+    List<Color> kDefaultRainbowColors = const [
       Colors.orange,
-      Colors.yellow,
-      Colors.green,
-      Colors.blue,
-      Colors.indigo,
-      Colors.purple,
     ];
     return Center(
-        child: SizedBox(
-      width: 80,
-      height: 80,
-      child: LoadingIndicator(
-        indicatorType: Indicator.lineSpinFadeLoader,
-        colors: kDefaultRainbowColors,
-        strokeWidth: 0.5,
-        backgroundColor: Colors.transparent,
-        pause: false,
+        child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: SizedBox(
+        width: 40,
+        height: 40,
+        child: LoadingIndicator(
+          indicatorType: Indicator.lineSpinFadeLoader,
+          colors: kDefaultRainbowColors,
+          strokeWidth: 1,
+          backgroundColor: Colors.transparent,                
+        ),
       ),
     ));
   }
 }
-

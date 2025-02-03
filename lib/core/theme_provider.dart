@@ -34,13 +34,15 @@ class ThemeProvider with ChangeNotifier {
     primarySwatch: Colors.blue,
     brightness: Brightness.light,
     scaffoldBackgroundColor: Colors.white,
+    dividerColor: Colors.black,
     primaryColor: Colors.black,
     buttonTheme: const ButtonThemeData(
       buttonColor: Colors.black,
     ),
     textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: Colors.black87),
+      bodyLarge: TextStyle(color: Colors.black),
       bodyMedium: TextStyle(color: Colors.black87),
+      bodySmall: TextStyle(color: Colors.black, fontSize: 16),    
     ),
     cardColor: Colors.white,
   );
@@ -49,13 +51,15 @@ class ThemeProvider with ChangeNotifier {
     primarySwatch: Colors.blue,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Colors.grey[900],
+    dividerColor: const Color(0xff1e2937),
     primaryColor: Colors.white,
     buttonTheme: const ButtonThemeData(
-      buttonColor: Colors.white,
+      buttonColor: Colors.white,      
     ),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
-      bodyMedium: TextStyle(color: Colors.white70),
+      bodyMedium: TextStyle(color: Colors.white),
+      bodySmall: TextStyle(color: Colors.white54, fontSize: 16),    
     ),
     cardColor: const Color(0xff1e2937),
   );

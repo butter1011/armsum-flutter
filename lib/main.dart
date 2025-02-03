@@ -2,12 +2,14 @@ import 'package:armsum/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/theme_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -22,9 +24,6 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Flutter Theme Switcher',
           theme: themeProvider.themeData,
-          darkTheme: ThemeData.dark(),
-          themeMode:
-              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: const HomePage(),
         );
       },
