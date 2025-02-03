@@ -42,6 +42,7 @@ class ThemeProvider with ChangeNotifier {
       bodyLarge: TextStyle(color: Colors.black87),
       bodyMedium: TextStyle(color: Colors.black87),
     ),
+    cardColor: Colors.white,
   );
 
   final _darkTheme = ThemeData(
@@ -49,12 +50,13 @@ class ThemeProvider with ChangeNotifier {
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Colors.grey[900],
     primaryColor: Colors.white,
-    buttonTheme: ButtonThemeData(
+    buttonTheme: const ButtonThemeData(
       buttonColor: Colors.white,
     ),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Colors.white70),
     ),
+    cardColor: const Color(0xff1e2937),
   );
 }
