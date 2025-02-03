@@ -58,7 +58,7 @@ class _EnterUrlWidgetState extends State<EnterUrlWidget> {
                   borderSide: BorderSide.none,
                 ),
                 hintText: 'Տեղադրեք հոդվածի հղումը',
-                hintStyle: textTheme.bodySmall,
+                hintStyle: textTheme.displaySmall,
                 contentPadding: EdgeInsets.zero,
                 isDense: true,
               ),

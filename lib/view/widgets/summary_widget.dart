@@ -44,7 +44,7 @@ class SummaryWidget extends StatelessWidget {
             child: Text(
               article,
               textAlign: TextAlign.left,
-              style: textTheme.bodySmall,
+              style: textTheme.displaySmall,
             ),
           ),
         ],

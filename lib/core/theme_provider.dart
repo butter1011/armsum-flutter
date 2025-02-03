@@ -48,6 +48,8 @@ class ThemeProvider with ChangeNotifier {
       ),
       bodyMedium: const TextStyle(color: Colors.black87, fontSize: 20),
       bodySmall: const TextStyle(color: Colors.black, fontSize: 16),
+      displaySmall: const TextStyle(color: Colors.black54, fontSize: 16),
+
     ),
     cardColor: Colors.white,
   );
@@ -69,6 +71,7 @@ class ThemeProvider with ChangeNotifier {
       ),
       bodyMedium: const TextStyle(color: Colors.white, fontSize: 20),
       bodySmall: const TextStyle(color: Colors.white, fontSize: 16),
+      displaySmall: const TextStyle(color: Colors.white54, fontSize: 16),
     ),
     cardColor: const Color(0xff1e2937),
   );

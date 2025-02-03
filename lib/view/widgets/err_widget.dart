@@ -20,7 +20,7 @@ class ErrWidget extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           "An error occurred: Failed extracting text corpus from the page. Make sure you are trying to summarize a news article or another page with clearly defined blocks of text.",
-          style: textTheme.bodySmall,
+          style: textTheme.displaySmall,
         )
       ],
     );
