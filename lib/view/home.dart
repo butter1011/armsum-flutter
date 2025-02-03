@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchArticle(String url) async {
-    FocusScope.of(context).unfocus();
+    FocusScope.of(context).unfocus();   
     if (url.isEmpty) {
       setState(() {
         showTooltip = true;
@@ -87,8 +87,8 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
-      isLoading = true;
-      happenedError = false;
+      isLoading = true; 
+      happenedError = false;   
     });
 
     try {

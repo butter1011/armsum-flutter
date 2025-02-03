@@ -7,8 +7,7 @@ class SummaryController {
   final String apiKey = dotenv.get('apiKey');
   final String apiUrl = dotenv.get('apiUrl');
 
-  Future<Map<String, dynamic>> getSummary(String articleUrl) async {
-    print("This is apiKey>>>>>>>>>>>>>>>>>>>>> $apiKey");
+  Future<Map<String, dynamic>> getSummary(String articleUrl) async {    
     try {
       final response = await http.get(
         Uri.parse('$apiUrl?url=${Uri.encodeComponent(articleUrl)}&length=3'),
