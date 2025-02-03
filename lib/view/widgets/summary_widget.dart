@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SummaryWidget extends StatelessWidget {
-  const SummaryWidget({super.key});
+  const SummaryWidget({super.key, required this.article});
+  final String article;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final cardColor = Theme.of(context).cardColor;
+    print("========================== $article");
 
     return SafeArea(
       child: Column(
@@ -38,22 +40,15 @@ class SummaryWidget extends StatelessWidget {
                 )),
             padding: const EdgeInsets.symmetric(
               horizontal: 16,
-              vertical: 4,
+              vertical: 20,
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),                      
-                    ),
-                    style: TextStyle(
-                        color: textTheme.bodyLarge?.color ?? Colors.white),
-                  ),
-                ),
-              ],
+            child: Text(
+              article,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 16,
+                color: textTheme.bodyLarge?.color,
+              ),
             ),
           ),
         ],
