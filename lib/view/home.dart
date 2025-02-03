@@ -276,8 +276,6 @@ class _HomePageState extends State<HomePage> {
                         const LoadingWidget()
                       else if (article.isNotEmpty)
                         SummaryWidget(article: article)
-                      else
-                        const SizedBox(height: 200),
                     ],
                   ),
                 ),
